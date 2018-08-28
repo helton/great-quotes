@@ -2,31 +2,44 @@ version: '3.1'
 
 services:
 
-  db:
+  mysql:
     image: mysql:5.7
-    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: k2j32ks4
     ports:
           - 3306:3306
     volumes:
       - ../db:/docker-entrypoint-initdb.d
+    networks:
+      - greatquotes
 
   adminer:
-    image: adminer
-    restart: always
+    image: adminer 
+    ports:
+      - 8081:8080
+    depends_on:
+      - mysql
+    networks:
+      - greatquotes
+
+  frontend:
+    build: ../frontend/
+    ports:
+      - 80:80
+    depends_on:
+      - mysql
+    networks:
+      - greatquotes
+
+  backend:
+    build: ../backend/
     ports:
       - 8080:8080
     depends_on:
-      - db
+      - mysql
+    networks:
+      - greatquotes
 
-#  server:
-#    image: openjdk:8-jre-alpine
-#    restart: always
-#    depends_on:
-#      - db
-#    volumes:
-#      - ./grpc:/home
-#    entrypoint: ["java", "-jar", "bla.jar"]
-
-
+networks:
+  greatquotes:
+    driver: bridge
