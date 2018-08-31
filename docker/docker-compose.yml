@@ -25,6 +25,11 @@ services:
     build: ../backend/
     ports:
       - 8090:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
     depends_on:
       - mysql
     networks:
