@@ -8,29 +8,7 @@ const app = express();
 
 const MAX_TOP_GREAT_QUOTES = 2;
 
-let quotes = [
-    {
-        id: uuidv4(),
-        author: "helton",
-        quote: "hahaha, it's funny",
-        likes: 0,
-        createdAt: new Date()
-    },
-    {
-        id: uuidv4(),
-        author: "joao",
-        quote: "very funny",
-        likes: 10,
-        createdAt: new Date()
-    },
-    {
-        id: uuidv4(),
-        author: "felipe",
-        quote: "lol",
-        likes: 5,
-        createdAt: new Date()
-    }
-]
+let quotes = []
 
 app.use(express.static('public'))
 app.use(bodyParser.json())
