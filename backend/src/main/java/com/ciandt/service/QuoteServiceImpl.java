@@ -15,7 +15,7 @@ import java.util.List;
 @Service("QuoteService")
 public class QuoteServiceImpl implements QuoteService {
 
-    Logger log = LoggerFactory.getLogger(Server.class);
+    private static Logger log = LoggerFactory.getLogger(Server.class);
 
     @Override
     public Quote createQuote(Quote quote) {
