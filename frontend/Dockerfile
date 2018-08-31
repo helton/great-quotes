@@ -1,7 +1,6 @@
-FROM nginx
-
-WORKDIR /usr/share/nginx/html
-
+FROM node:10
 ENV APP_VERSION 0.0.1
-
-ADD index.html .
+ADD . /app  
+WORKDIR /app  
+RUN npm install  
+CMD ["node", "index.js"]
