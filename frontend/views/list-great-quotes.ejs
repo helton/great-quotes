@@ -1,0 +1,48 @@
+<% include header %>
+
+    <h1><%= title %></h1>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Author</th>
+          <th scope="col">Quote</th>
+          <th scope="col">Likes</th>
+          <th scope="col">Created at</th>
+          <th scope="col">Like</th>
+          <th scope="col">Remove</th>
+          <th scope="col">Edit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% quotes.forEach((quote, i) => { %>
+          <tr>
+            <td><%= i + 1 %></td>
+            <td><%= quote.author %></td>
+            <td><%= quote.quote %></td>
+            <td><%= quote.likes %></td>
+            <td><%= utils.formatDate(quote.createdAt) %></td>
+            <td class="like">
+              <form method="post" action = "/like-great-quote" method="post">
+                <input name="id" value="<%= quote.id %>" hidden/>
+                <input type="Submit" value="👍"/>
+              </form>
+            </td>
+            <td class="remove">
+              <form method="post" action = "/remove-great-quote" method="post">
+                <input name="id" value="<%= quote.id %>" hidden/>
+                <input type="Submit" value="️️️️🗑️"/>
+              </form>
+            </td>
+            <td class="edit">
+              <form method="get" action = "/edit-great-quote" method="post">
+                <input name="id" value="<%= quote.id %>" hidden/>
+                <input type="Submit" value="️️️️✎"/>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+    </tbody>
+    </table>
+
+<% include footer %>
