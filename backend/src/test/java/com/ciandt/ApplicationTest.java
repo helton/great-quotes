@@ -1,6 +1,6 @@
 package com.ciandt;
 
-import com.ciandt.model.User;
+import com.ciandt.model.Quote;
 import com.google.gson.Gson;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -13,13 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
 import static org.hamcrest.Matchers.containsString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,25 +38,12 @@ public class ApplicationTest {
     }
 
     @Test
-    public void test01_ShouldPostUser() throws Exception {
+    public void test01_ShouldPostSiriusQuote() throws Exception {
         Gson gson = new Gson();
-        User user = new User(1, new BigDecimal(8));
-        String jsonString = gson.toJson(user);
+        Quote quote = new Quote("Sirius", "A mussum iria ficar pequena");
+        String jsonString = gson.toJson(quote);
 
-        this.mockMvc.perform(post("/user")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonString))
-                .andExpect(content().string(containsString(jsonString)))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void test02_ShouldPostUser() throws Exception {
-        Gson gson = new Gson();
-        User user = new User(2, new BigDecimal(80));
-        String jsonString = gson.toJson(user);
-
-        this.mockMvc.perform(post("/user")
+        this.mockMvc.perform(post("/quote")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonString))
                 .andExpect(content().json(jsonString))
@@ -69,12 +51,12 @@ public class ApplicationTest {
     }
 
     @Test
-    public void test03_ShouldPostUser() throws Exception {
+    public void test02_ShouldPostVictorQuote() throws Exception {
         Gson gson = new Gson();
-        User user = new User(3, new BigDecimal(8000000));
-        String jsonString = gson.toJson(user);
+        Quote quote = new Quote("Victor", "Só vi a cabecinha!");
+        String jsonString = gson.toJson(quote);
 
-        this.mockMvc.perform(post("/user")
+        this.mockMvc.perform(post("/quote")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonString))
                 .andExpect(content().json(jsonString))
@@ -82,21 +64,35 @@ public class ApplicationTest {
     }
 
     @Test
-    public void test04_ShouldGetUser() throws Exception {
+    public void test03_ShouldPostPicanhaQuote() throws Exception {
         Gson gson = new Gson();
-        User user = new User(3, new BigDecimal(8000000));
-        String jsonString = gson.toJson(user);
+        Quote quote = new Quote("Picanha", "O sistema funciona por sorte.");
+        String jsonString = gson.toJson(quote);
 
-        this.mockMvc.perform(get("/user/3")
+        this.mockMvc.perform(post("/quote")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonString))
+                .andExpect(content().json(jsonString))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void test04_ShouldGetPicanhaQuote() throws Exception {
+        Gson gson = new Gson();
+        Quote quote = new Quote("Picanha", "O sistema funciona por sorte.");
+        quote.setCreatedAt(null);
+        String jsonString = gson.toJson(quote);
+
+        this.mockMvc.perform(get("/quote/3")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().json(jsonString))
+                .andExpect(content().json(jsonString, false))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void test05_ShouldDeleteUser() throws Exception {
+    public void test05_ShouldDeletePicanhaQuote() throws Exception {
 
-        this.mockMvc.perform(delete("/user/3")
+        this.mockMvc.perform(delete("/quote/3")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(containsString("OK")))
                 .andExpect(status().isOk());
@@ -104,10 +100,18 @@ public class ApplicationTest {
 
 
     @Test
-    public void test06_ShouldGetEmptyList() throws Exception {
-        this.mockMvc.perform(get("/user/3")
+    public void test06_ShouldNotFindQuote() throws Exception {
+        this.mockMvc.perform(get("/quote/3")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(containsString("User not found")))
+                .andExpect(content().string(containsString("Quote not found")))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void test07_ShouldLikeSiriusQuote() throws Exception {
+        this.mockMvc.perform(post("/quote/1/like")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().string(containsString("OK")))
+                .andExpect(status().isOk());
     }
 }
