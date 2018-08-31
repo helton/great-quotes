@@ -1,17 +1,14 @@
 package com.ciandt;
 
-import com.ciandt.model.User;
-import com.ciandt.service.UserService;
+import com.ciandt.model.Quote;
+import com.ciandt.service.QuoteService;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -22,50 +19,58 @@ public class Main {
     Logger logger = Logger.getLogger(Main.class.getName());
 
     @Autowired
-    UserService userService;
+    QuoteService quoteService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String getHelloWorld() {
         return "Hello world!!";
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> listUsers() {
+    @RequestMapping(value = "/quote", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> listQuotes() {
         Gson gson = new Gson();
-        List<User> usersList = userService.listUsers();
-        return new ResponseEntity<String>(gson.toJson(usersList), HttpStatus.OK);
+        List<Quote> quoteList = quoteService.listQuotes();
+        return new ResponseEntity<String>(gson.toJson(quoteList), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUser(@PathVariable("id") int id) {
+    @RequestMapping(value = "/quote/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> readQuote(@PathVariable("id") int id) {
         Gson gson = new Gson();
-        User user = userService.getUser(id);
-        if (user != null) {
-            return new ResponseEntity<String>(gson.toJson(user), HttpStatus.OK);
+        Quote quote = quoteService.readQuote(id);
+        if (quote != null) {
+            return new ResponseEntity<String>(gson.toJson(quote), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("Quote not found", HttpStatus.NOT_FOUND);
         }
-        else {
-            return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
-        }
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> postUser(@RequestBody String data) {
+    @RequestMapping(value = "/quote", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> createQuote(@RequestBody String data) {
         Gson gson = new Gson();
-        User user = gson.fromJson(data, User.class);
-        userService.createUser(user);
-        return new ResponseEntity<String>(gson.toJson(user), HttpStatus.OK);
+        Quote quote = gson.fromJson(data, Quote.class);
+        quote = quoteService.createQuote(quote);
+        return new ResponseEntity<String>(gson.toJson(quote), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteUser(@PathVariable("id") int id) {
-        User user = userService.getUser(id);
-        if (user != null) {
-            userService.deleteUser(user);
+    @RequestMapping(value = "/quote/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> deleteQuote(@PathVariable("id") int id) {
+        Quote quote = quoteService.readQuote(id);
+        if (quoteService.deleteQuote(id)) {
             return new ResponseEntity<String>("OK", HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<String>("User not found", HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<String>("Quote not found", HttpStatus.NOT_FOUND);
         }
     }
+
+    @RequestMapping(value = "/quote/{id}/like", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> performLike(@PathVariable("id") int id) {
+        Gson gson = new Gson();
+        if (quoteService.performLike(id)) {
+            return new ResponseEntity<String>("OK", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("Quote not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
 
 }

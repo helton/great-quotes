@@ -1,6 +1,6 @@
 package com.ciandt;
 
-import com.ciandt.model.User;
+import com.ciandt.model.Quote;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
@@ -23,7 +23,7 @@ public class Application implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         StandardServiceRegistry standardRegistry = new StandardServiceRegistryBuilder().configure("hibernate.cfg.xml").build();
-        Metadata metadata = new MetadataSources(standardRegistry).addAnnotatedClass(User.class)
+        Metadata metadata = new MetadataSources(standardRegistry).addAnnotatedClass(Quote.class)
                 .getMetadataBuilder().applyImplicitNamingStrategy(ImplicitNamingStrategyJpaCompliantImpl.INSTANCE).build();
         sessionFactory = metadata.getSessionFactoryBuilder().build();
     }
