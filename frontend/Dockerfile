@@ -3,4 +3,4 @@ ENV APP_VERSION 0.0.1
 ADD . /app  
 WORKDIR /app  
 RUN npm install  
-CMD ["node", "index.js"]
+CMD ["npm", "start"]
