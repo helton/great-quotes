@@ -1,14 +1,18 @@
-version: "3.1"
+version: "2.1"
 
 services:
-  mysql:
+  db:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: k2j32ks4
+      MYSQL_ROOT_PASSWORD: k2j32ks4    
     ports:
       - 3306:3306
     volumes:
       - ../db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: mysql --user=root --password=k2j32ks4 -e 'SHOW DATABASES'
+      timeout: 20s
+      retries: 10
     networks:
       - greatquotes
 
@@ -17,7 +21,7 @@ services:
     ports:
       - 8085:8080
     depends_on:
-      - mysql
+      - db
     networks:
       - greatquotes
 
@@ -26,7 +30,8 @@ services:
     ports:
       - 8090:8080
     depends_on:
-      - mysql
+      db:
+        condition: service_healthy
     networks:
       - greatquotes
 
