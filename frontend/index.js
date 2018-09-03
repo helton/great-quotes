@@ -7,7 +7,7 @@ const axios = require("axios")
 const MAX_TOP_GREAT_QUOTES = 3
 const BASE_URL = process.env.BACKEND_HOST
 
-//Configure app
+//configuration
 const app = express()
 
 app.use(express.static('public'))
