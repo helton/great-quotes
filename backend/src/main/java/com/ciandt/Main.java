@@ -72,5 +72,12 @@ public class Main {
         }
     }
 
+    @RequestMapping(value = "/quote", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> editQuote(@RequestBody String data) {
+        Gson gson = new Gson();
+        Quote quote = gson.fromJson(data, Quote.class);
+        quote = quoteService.updateQuote(quote);
+        return new ResponseEntity<String>(gson.toJson(quote), HttpStatus.OK);
+    }
 
 }
