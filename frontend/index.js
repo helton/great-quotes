@@ -3,42 +3,44 @@ const path = require("path")
 const bodyParser = require("body-parser")
 const moment = require("moment")
 const axios = require("axios")
-const uuidv4 = require('uuid/v4')
 
-const app = express();
-
-const MAX_TOP_GREAT_QUOTES = 3;
-
+const MAX_TOP_GREAT_QUOTES = 3
 const BASE_URL = process.env.BACKEND_HOST
+
+//Configure app
+const app = express()
 
 app.use(express.static('public'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"))
+app.set("view engine", "ejs")
 
+//utils
 const utils = {
-    formatDate: date => 
-        moment(date).format('DD/MM/YYYY HH:mm:ss')
+    formatDate: date => moment(date, 'MMMM DD, YYYY LTS').format('DD/MM/YYYY HH:mm:ss')
 }
 
 const render = (response, view, data={}) => {
     response.render(view, Object.assign(data, { utils, top: MAX_TOP_GREAT_QUOTES }))
 }
 
+const handleError = error => console.error(error)
+
+//routing
 app.get("/", (req, res) => {
     render(res, "home")
-});
+})
 
 app.get("/all-great-quotes", async (req, res) => {
     try {
         const quotes = (await axios.get(`${BASE_URL}/quote`)).data
         render(res, "list-great-quotes", { quotes, title: "All Great Quotes" })
     } catch (e) {
-        console.log(e)
+        handleError(e)
     }
-});
+})
 
 app.get("/top-great-quotes", async (req, res) => {
     try {
@@ -54,9 +56,9 @@ app.get("/top-great-quotes", async (req, res) => {
             title: `Top ${MAX_TOP_GREAT_QUOTES} Great Quotes`
         })
     } catch (e) {
-        console.log(e)
+        handleError(e)
     }
-});
+})
 
 app.get('/new-great-quote', (req, res) => {
     render(res, "new-great-quote")
@@ -68,7 +70,7 @@ app.post("/like-great-quote", async (req, res) => {
         await axios.post(`${BASE_URL}/quote/${id}/like`)
         res.redirect("all-great-quotes")
     } catch (e) {
-        console.log(e)
+        handleError(e)
     }
 })
 
@@ -78,7 +80,7 @@ app.post("/remove-great-quote", async (req, res) => {
         await axios.delete(`${BASE_URL}/quote/${id}`)
         res.redirect("all-great-quotes")
     } catch (e) {
-        console.log(e)
+        handleError(e)
     }
 })
 
@@ -88,7 +90,7 @@ app.get("/edit-great-quote", async (req, res) => {
         const quote = (await axios.get(`${BASE_URL}/quote/${id}`)).data
         render(res, "edit-great-quote", { quote })
     } catch (e) {
-        console.log(e)
+        handleError(e)
     }
 })
 
@@ -100,10 +102,10 @@ app.post("/edit-great-quote", async (req, res) => {
             ...greatQuote,
             author,
             quote
-        });
+        })
         res.redirect("all-great-quotes")
     } catch (e) {
-        console.log(e)
+        handleError(e)
     }
 })
 
@@ -111,14 +113,12 @@ app.post('/new-great-quote', async (req, res) => {
     try {
         await axios.post(`${BASE_URL}/quote`, {
             author: req.body.author,
-            quote: req.body.quote,
-            createdAt: moment().toDate(),
-            likes: 0
-        });
+            quote: req.body.quote
+        })
         res.redirect("all-great-quotes")
     } catch (e) {
-        console.log(e)
+        handleError(e)
     }
 })
 
-app.listen(process.env.PORT, () => console.log(`Front-end server running on port ${process.env.PORT} pointing to backend at ${process.env.BACKEND_HOST} ...`));
+app.listen(process.env.PORT, () => console.log(`Front-end server running on port ${process.env.PORT} pointing to backend at ${process.env.BACKEND_HOST} ...`))

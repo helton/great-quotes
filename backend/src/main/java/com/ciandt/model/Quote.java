@@ -1,15 +1,17 @@
 package com.ciandt.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
 @Table(name="quotes")
 @Data
+@NoArgsConstructor
 public class Quote implements Serializable {
 
     @Id
@@ -42,7 +44,4 @@ public class Quote implements Serializable {
         this.quote = quote;
     }
 
-    public Quote() {
-
-    }
 }

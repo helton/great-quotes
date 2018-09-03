@@ -11,6 +11,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.annotation.PostConstruct;
+import java.util.Date;
+import java.util.TimeZone;
+
 @SpringBootApplication
 public class Application implements CommandLineRunner {
 
@@ -27,4 +31,10 @@ public class Application implements CommandLineRunner {
                 .getMetadataBuilder().applyImplicitNamingStrategy(ImplicitNamingStrategyJpaCompliantImpl.INSTANCE).build();
         sessionFactory = metadata.getSessionFactoryBuilder().build();
     }
+
+    @PostConstruct
+    public void init(){
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
+    }
+
 }
