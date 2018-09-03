@@ -2,13 +2,14 @@ const express = require("express")
 const path = require("path")
 const bodyParser = require("body-parser")
 const moment = require("moment")
+const axios = require("axios")
 const uuidv4 = require('uuid/v4')
 
 const app = express();
 
-const MAX_TOP_GREAT_QUOTES = 2;
+const MAX_TOP_GREAT_QUOTES = 3;
 
-let quotes = []
+const BASE_URL = process.env.BACKEND_HOST
 
 app.use(express.static('public'))
 app.use(bodyParser.json())
@@ -30,58 +31,94 @@ app.get("/", (req, res) => {
     render(res, "home")
 });
 
-app.get("/all-great-quotes", (req, res) => {
-    render(res, "list-great-quotes", { quotes, title: "All Great Quotes" })
+app.get("/all-great-quotes", async (req, res) => {
+    try {
+        const quotes = (await axios.get(`${BASE_URL}/quote`)).data
+        render(res, "list-great-quotes", { quotes, title: "All Great Quotes" })
+    } catch (e) {
+        console.log(e)
+    }
 });
 
-app.get("/top-great-quotes", (req, res) => {
-    render(res, "list-great-quotes", { 
-        quotes: quotes.filter((v, i) => i + 1 <= MAX_TOP_GREAT_QUOTES),
-        title: `Top ${MAX_TOP_GREAT_QUOTES} Great Quotes`
-    })
+app.get("/top-great-quotes", async (req, res) => {
+    try {
+        const quotes = (await axios.get(`${BASE_URL}/quote`))
+            .data
+            .sort(
+                (left, right) => right.likes - left.likes
+            ).filter(
+                (v, i) => i + 1 <= MAX_TOP_GREAT_QUOTES
+            )
+        render(res, "list-great-quotes", { 
+            quotes: quotes,
+            title: `Top ${MAX_TOP_GREAT_QUOTES} Great Quotes`
+        })
+    } catch (e) {
+        console.log(e)
+    }
 });
 
 app.get('/new-great-quote', (req, res) => {
     render(res, "new-great-quote")
 })
 
-app.post("/like-great-quote", (req, res) => {
-    const { id } = req.body
-    const quote = quotes.find(quote => quote.id === id)
-    quote.likes++;
-    res.redirect("all-great-quotes")
-})
-
-app.post("/remove-great-quote", (req, res) => {
-    const { id } = req.body
-    quotes = quotes.filter(quote => quote.id !== id)
-    res.redirect("all-great-quotes")
-})
-
-app.get("/edit-great-quote", (req, res) => {
-    const { id } = req.query
-    render(res, "edit-great-quote", { quote: quotes.find(quote => quote.id === id) })
-})
-
-app.post("/edit-great-quote", (req, res) => {
-    const { id, author, quote } = req.body
-    const currentQuote = quotes.find(quote => quote.id === id)
-    currentQuote.author = author
-    currentQuote.quote = quote
-    res.redirect("all-great-quotes")
-})
-
-app.post('/new-great-quote', (req, res) => {
-    const quote = {
-        id: uuidv4(),
-        author: req.body.author,
-        quote: req.body.quote,
-        likes: 0,
-        createdAt: new Date()
+app.post("/like-great-quote", async (req, res) => {
+    try {
+        const { id } = req.body
+        await axios.post(`${BASE_URL}/quote/${id}/like`)
+        res.redirect("all-great-quotes")
+    } catch (e) {
+        console.log(e)
     }
-    console.log(quote)
-    quotes.push(quote)
-    res.redirect("all-great-quotes")
 })
 
-app.listen(3000, () => console.log("Front-end server running...."));
+app.post("/remove-great-quote", async (req, res) => {
+    try {
+        const { id } = req.body
+        await axios.delete(`${BASE_URL}/quote/${id}`)
+        res.redirect("all-great-quotes")
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+app.get("/edit-great-quote", async (req, res) => {
+    try {
+        const { id } = req.query
+        const quote = (await axios.get(`${BASE_URL}/quote/${id}`)).data
+        render(res, "edit-great-quote", { quote })
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+app.post("/edit-great-quote", async (req, res) => {
+    try {
+        const { id, author, quote } = req.body
+        const greatQuote = (await axios.get(`${BASE_URL}/quote/${id}`)).data
+        await axios.put(`${BASE_URL}/quote`, {
+            ...greatQuote,
+            author,
+            quote
+        });
+        res.redirect("all-great-quotes")
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+app.post('/new-great-quote', async (req, res) => {
+    try {
+        await axios.post(`${BASE_URL}/quote`, {
+            author: req.body.author,
+            quote: req.body.quote,
+            createdAt: moment().toDate(),
+            likes: 0
+        });
+        res.redirect("all-great-quotes")
+    } catch (e) {
+        console.log(e)
+    }
+})
+
+app.listen(process.env.PORT, () => console.log(`Front-end server running on port ${process.env.PORT} pointing to backend at ${process.env.BACKEND_HOST} ...`));

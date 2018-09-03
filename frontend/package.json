@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "start-dev": "nodemon index.js"
+    "start": "PORT=3000 BACKEND_HOST=http://backend:8080 node index.js",
+    "start-local": "PORT=3000 BACKEND_HOST=http://localhost:8090 nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -13,6 +13,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "ejs": "^2.6.1",
     "express": "^4.16.3",
