@@ -20,3 +20,4 @@ docker stop $(docker ps -aq)
 echo "Building images"
 cd ../docker
 docker-compose build
+cd ../scripts/linux-mac
