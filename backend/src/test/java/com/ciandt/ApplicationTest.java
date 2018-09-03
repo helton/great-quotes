@@ -1,5 +1,6 @@
 package com.ciandt;
 
+import com.ciandt.model.Message;
 import com.ciandt.model.Quote;
 import com.google.gson.Gson;
 import org.junit.FixMethodOrder;
@@ -92,26 +93,53 @@ public class ApplicationTest {
     @Test
     public void test05_ShouldDeletePicanhaQuote() throws Exception {
 
+        Gson gson = new Gson();
+        Message message = new Message("OK");
+        String jsonString = gson.toJson(message);
+
         this.mockMvc.perform(delete("/quote/3")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(containsString("OK")))
+                .andExpect(content().json(jsonString))
                 .andExpect(status().isOk());
     }
 
 
     @Test
     public void test06_ShouldNotFindQuote() throws Exception {
+        Gson gson = new Gson();
+        Message message = new Message("Quote not found");
+        String jsonString = gson.toJson(message);
+
         this.mockMvc.perform(get("/quote/3")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(containsString("Quote not found")))
+                .andExpect(content().json(jsonString))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void test07_ShouldLikeSiriusQuote() throws Exception {
+        Gson gson = new Gson();
+        Message message = new Message("OK");
+        String jsonString = gson.toJson(message);
+
         this.mockMvc.perform(post("/quote/1/like")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(content().string(containsString("OK")))
+                .andExpect(content().json(jsonString))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void test08_ShouldHave1LikeInSiriusQuote() throws Exception {
+        Gson gson = new Gson();
+        Quote quote = new Quote("Sirius", "A mussum iria ficar pequena");
+        quote.setCreatedAt(null);
+        quote.setLikes(1);
+        String jsonString = gson.toJson(quote);
+
+        this.mockMvc.perform(get("/quote/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(jsonString))
                 .andExpect(status().isOk());
     }
 }
