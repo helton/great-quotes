@@ -25,8 +25,8 @@ services:
     networks:
       - greatquotes
 
-  backend:
-    build: ../backend/
+  api:
+    build: ../api/
     ports:
       - 8090:8080
     depends_on:
@@ -35,12 +35,12 @@ services:
     networks:
       - greatquotes
 
-  frontend:
-    build: ../frontend/
+  app:
+    build: ../app/
     ports:
       - 85:3000
     depends_on:
-      - backend
+      - api
     networks:
       - greatquotes
 

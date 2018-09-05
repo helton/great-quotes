@@ -67,7 +67,7 @@
 
     </dependencies>
     <build>
-        <finalName>great-quotes-backend</finalName>
+        <finalName>great-quotes-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

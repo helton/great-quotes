@@ -1,11 +1,11 @@
 {
-  "name": "great-quotes-frontend",
+  "name": "great-quotes-app",
   "description": "Great Quotes from Humanity",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "PORT=3000 BACKEND_HOST=http://backend:8080 node index.js",
-    "start-local": "PORT=3000 BACKEND_HOST=http://localhost:8090 nodemon index.js"
+    "start": "PORT=3000 API_HOST=http://api:8080 node index.js",
+    "start-local": "PORT=3000 API_HOST=http://localhost:8090 nodemon index.js"
   },
   "repository": {
     "type": "git",

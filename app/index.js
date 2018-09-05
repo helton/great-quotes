@@ -5,7 +5,7 @@ const moment = require("moment")
 const axios = require("axios")
 
 const MAX_TOP_GREAT_QUOTES = 3
-const BASE_URL = process.env.BACKEND_HOST
+const BASE_URL = process.env.API_HOST
 
 //configuration
 const app = express()
@@ -121,4 +121,4 @@ app.post('/new-great-quote', async (req, res) => {
     }
 })
 
-app.listen(process.env.PORT, () => console.log(`Front-end server running on port ${process.env.PORT} pointing to backend at ${process.env.BACKEND_HOST} ...`))
+app.listen(process.env.PORT, () => console.log(`Front-end server running on port ${process.env.PORT} pointing to API at ${process.env.API_HOST} ...`))
