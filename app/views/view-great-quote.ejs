@@ -1,0 +1,17 @@
+<% include header %>
+    <div class="quote">
+        <h2 class="page-title">View Great Quote</h2>
+        <form>
+            <input type="text" name="id" value="<%= quote.id %>" hidden>
+            <div class="form-group">
+                <label for="author">Author</label>
+                <input type="autor" class="form-control" id="autor" name="author" aria-describedby="author" value="<%= quote.author %>" readonly>
+            </div>
+            <div class="form-group">
+                <label for="quote">Quote</label>
+                <textarea class="form-control" id="quote" name="quote" rows="5" readonly><%= quote.quote %></textarea>
+            </div>
+            <input action="action" onclick="window.history.go(-1); return false;" type="button" value="Close" class="btn btn-secondary"/>
+        </form>
+    </div>
+<% include footer %>

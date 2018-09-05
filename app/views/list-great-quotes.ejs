@@ -1,50 +1,61 @@
 <% include header %>
 
-    <h1><%= title %></h1>
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Id</th>
-          <th scope="col">Author</th>
-          <th scope="col">Quote</th>
-          <th scope="col">Likes</th>
-          <th scope="col">Created at</th>
-          <th scope="col">Like</th>
-          <th scope="col">Remove</th>
-          <th scope="col">Edit</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% quotes.forEach((quote, i) => { %>
-          <tr>
-            <td><%= i + 1 %></td>
-            <td><%= quote.id %></td>
-            <td><%= quote.author %></td>
-            <td><%= quote.quote %></td>
-            <td><%= quote.likes %></td>
-            <td><%= utils.formatDate(quote.createdAt) %></td>
-            <td class="like">
-              <form method="post" action = "/like-great-quote" method="post">
-                <input name="id" value="<%= quote.id %>" hidden/>
-                <input type="Submit" value="👍"/>
-              </form>
-            </td>
-            <td class="remove">
-              <form method="post" action = "/remove-great-quote" method="post">
-                <input name="id" value="<%= quote.id %>" hidden/>
-                <input type="Submit" value="️️️️🗑️"/>
-              </form>
-            </td>
-            <td class="edit">
-              <form method="get" action = "/edit-great-quote" method="post">
-                <input name="id" value="<%= quote.id %>" hidden/>
-                <input type="Submit" value="️️️️✎"/>
-              </form>
-            </td>
-          </tr>
-        <% }) %>
-    </tbody>
-    </table>
+  <div class="table-wrapper">
+      <div class="table-title">
+          <div class="row">
+              <div class="col-sm-6">
+                <h2><%= title %></h2>
+              </div>
+              <div class="col-sm-6">
+                <a href="/new-great-quote" class="btn btn-success" data-toggle="modal">
+                  <i class="material-icons">&#xE147;</i>
+                  <span>Add a Great Quote</span>
+                </a>
+              </div>
+          </div>
+      </div>
+      <table class="table table-striped table-hover">
+          <thead>
+              <tr class="d-flex">
+                <th class="col-1">#</th>
+                <th class="col-1">Id</th>
+                <th class="col-2">Author</th>
+                <th class="col-3">Quote</th>
+                <th class="col-1">Likes</th>
+                <th class="col-2">Created at</th>
+                <th class="col-2">Actions</th>
+              </tr>
+          </thead>
+          <tbody>
+            <% quotes.forEach((quote, i) => { %>
+              <tr class="d-flex">
+                <td class="col-sm-1"><%= i + 1 %></td>
+                <td class="col-sm-1"><%= quote.id %></td>
+                <td class="col-sm-2"><%= quote.author %></td>
+                <td class="col-sm-3"><%= quote.quote %></td>
+                <td class="col-sm-1"><%= quote.likes %></td>
+                <td class="col-sm-2"><%= utils.formatDate(quote.createdAt) %></td>
+                <td class="col-sm-2 actions">
+                  <form method="post" action = "/like-great-quote" method="post">
+                    <input name="id" value="<%= quote.id %>" hidden/>
+                    <input type="submit" value="👍" class="action-button" title="Like"/>
+                  </form>
+                  <form method="get" action = "/view-great-quote" method="post">
+                    <input name="id" value="<%= quote.id %>" hidden/>
+                    <input type="submit" value="️️️️👁" class="action-button" title="View"/>
+                  </form>
+                  <form method="get" action = "/edit-great-quote" method="post">
+                    <input name="id" value="<%= quote.id %>" hidden/>
+                    <input type="submit" value="️️️️✎" class="action-button" title="Edit"/>
+                  </form>
+                  <form method="post" action = "/remove-great-quote" method="post">
+                    <input name="id" value="<%= quote.id %>" hidden/>
+                    <input type="submit" value="️️️️❎" class="action-button" title="Remove"/>
+                  </form>
+                </td>
+            <% }) %>
+          </tbody>
+      </table>
+  </div>
 
 <% include footer %>
