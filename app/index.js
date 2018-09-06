@@ -29,11 +29,7 @@ const render = (response, view, data={}) => {
 const handleError = error => console.error(error)
 
 //routing
-app.get("/", (req, res) => {
-    render(res, "home")
-})
-
-app.get("/all-great-quotes", async (req, res) => {
+app.get("/", async (req, res) => {
     try {
         const quotes = (await axios.get(`${BASE_URL}/quote`)).data
         render(res, "list-great-quotes", { quotes, title: "All Great Quotes" })
@@ -68,7 +64,7 @@ app.post("/like-great-quote", async (req, res) => {
     try {
         const { id } = req.body
         await axios.post(`${BASE_URL}/quote/${id}/like`)
-        res.redirect("all-great-quotes")
+        res.redirect("/")
     } catch (e) {
         handleError(e)
     }
@@ -78,7 +74,7 @@ app.post("/remove-great-quote", async (req, res) => {
     try {
         const { id } = req.body
         await axios.delete(`${BASE_URL}/quote/${id}`)
-        res.redirect("all-great-quotes")
+        res.redirect("/")
     } catch (e) {
         handleError(e)
     }
@@ -94,6 +90,16 @@ app.get("/edit-great-quote", async (req, res) => {
     }
 })
 
+app.get("/view-great-quote", async (req, res) => {
+    try {
+        const { id } = req.query
+        const quote = (await axios.get(`${BASE_URL}/quote/${id}`)).data
+        render(res, "view-great-quote", { quote })
+    } catch (e) {
+        handleError(e)
+    }
+})
+
 app.post("/edit-great-quote", async (req, res) => {
     try {
         const { id, author, quote } = req.body
@@ -103,7 +109,7 @@ app.post("/edit-great-quote", async (req, res) => {
             author,
             quote
         })
-        res.redirect("all-great-quotes")
+        res.redirect("/")
     } catch (e) {
         handleError(e)
     }
@@ -115,10 +121,10 @@ app.post('/new-great-quote', async (req, res) => {
             author: req.body.author,
             quote: req.body.quote
         })
-        res.redirect("all-great-quotes")
+        res.redirect("/")
     } catch (e) {
         handleError(e)
     }
 })
 
-app.listen(process.env.PORT, () => console.log(`Front-end server running on port ${process.env.PORT} pointing to API at ${process.env.API_HOST} ...`))
+app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT} pointing to API at ${process.env.API_HOST} ...`))
